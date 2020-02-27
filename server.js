@@ -6,6 +6,7 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const client = require('./lib/client');
+const request = require ('superagent');
 // Initiate database connection
 client.connect();
 
@@ -34,11 +35,11 @@ const authRoutes = createAuthRoutes({
     },
     insertUser(user, hash) {
         return client.query(`
-            INSERT into users (email, hash)
-            VALUES ($1, $2)
+            INSERT into users (email, hash, display_name)
+            VALUES ($1, $2, $3)
             RETURNING id, email;
         `,
-        [user.email, hash]
+        [user.email, hash, user.display_name]
         ).then(result => result.rows[0]);
     }
 });
@@ -47,3 +48,28 @@ app.use('/api/auth', authRoutes);
 
 const ensureAuth = require('./lib/auth/ensure-auth');
 app.use('/api', ensureAuth);
+
+app.get('/api/drink', async(req, res) => {
+    const data = await request.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${req.query.s}`);
+    res.json(data.body);
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+app.listen(PORT, () => {
+    console.log('server running on PORT', PORT);
+});
