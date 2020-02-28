@@ -15,7 +15,11 @@ async function run() {
             );
         
             CREATE TABLE favorites (
-                id VARCHAR(64) PRIMARY KEY
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(512) NOT NULL,
+                category VARCHAR(256) NOT NULL,
+                instructions VARCHAR(512) NOT NULL,
+                user_id INTEGER NOT NULL REFERENCES users(id)
             );
         `);
 

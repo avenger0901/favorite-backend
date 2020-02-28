@@ -47,17 +47,58 @@ const authRoutes = createAuthRoutes({
 app.use('/api/auth', authRoutes);
 
 const ensureAuth = require('./lib/auth/ensure-auth');
-app.use('/api', ensureAuth);
+app.use('/api/me', ensureAuth);
 
-app.get('/api/drink', async(req, res) => {
-    const data = await request.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${req.query.s}`);
-    res.json(data.body);
+
+
+app.get('/api/me/favorites', async(req, res) => {
+    try {
+        const myQuery = `
+            SELECT * FROM favorites
+            WHERE user_id = $1
+       `;
+        const favorites = await client.query(myQuery, [req.userId]);
+        res.json(favorites.rows);
+    } catch (e){
+        console.error(e);
+    }
 });
 
+app.post('/api/me/favorites', async(req, res) => {
+    try {
+        const {
+            name,
+            category,
+            instructions,
+        } = req.body;
 
+        const newFavorite = await client.query(`
+            INSERT INTO favorites (name,category, instructions,user_id)
+            values ($1,$2,$3,$4)
+            returning *
+        `, [
+            name,
+            category,
+            instructions,
+            req.userId
 
+        ]); 
 
+        res.json(newFavorite.rows[0]);
 
+    } catch (e){
+        console.error(e);
+    }
+});
+
+app.get('/api/me/drink', async(req, res) => {
+    try {
+        const data = await request.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${req.query.s}`);
+        res.json(data.body);
+    } catch (e){
+        console.error(e);
+    }
+});
 
 
 
