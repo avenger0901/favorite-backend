@@ -91,7 +91,7 @@ app.post('/api/me/favorites', async(req, res) => {
     }
 });
 
-app.get('/api/me/drink', async(req, res) => {
+app.get('/api/drink', async(req, res) => {
     try {
         const data = await request.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${req.query.s}`);
         res.json(data.body);
