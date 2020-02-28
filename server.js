@@ -68,8 +68,8 @@ app.post('/api/me/favorites', async(req, res) => {
     try {
         const {
             name,
-            category,
-            instructions,
+            status,
+            images,
         } = req.body;
 
         const newFavorite = await client.query(`
@@ -78,8 +78,8 @@ app.post('/api/me/favorites', async(req, res) => {
             returning *
         `, [
             name,
-            category,
-            instructions,
+            status,
+            images,
             req.userId
 
         ]); 
@@ -91,7 +91,7 @@ app.post('/api/me/favorites', async(req, res) => {
     }
 });
 
-app.get('/api/drink', async(req, res) => {
+app.get('/api/character', async(req, res) => {
     try {
         const data = await request.get(`https://rickandmortyapi.com/api/character/?name=${req.query.name}`);
         res.json(data.body);
