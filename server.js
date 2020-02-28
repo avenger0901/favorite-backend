@@ -93,7 +93,7 @@ app.post('/api/me/favorites', async(req, res) => {
 
 app.get('/api/drink', async(req, res) => {
     try {
-        const data = await request.get(`https://www.thecocktaildb.com/api/json/v1/1/search.php?s=${req.query.s}`);
+        const data = await request.get(`https://rickandmortyapi.com/api/character/?name=${req.query.name}`);
         res.json(data.body);
     } catch (e){
         console.error(e);
